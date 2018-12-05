@@ -1,0 +1,12 @@
+---
+micronaut:
+  application:
+    name: consumer-sample
+  executors:
+    consumer:
+      type: fixed
+      nThreads: 25
+---
+kafka:
+    bootstrap:
+        servers: localhost:9092

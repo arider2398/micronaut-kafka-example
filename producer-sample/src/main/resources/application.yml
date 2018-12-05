@@ -1,0 +1,9 @@
+---
+micronaut:
+    application:
+        name: producer-sample
+
+---
+kafka:
+    bootstrap:
+        servers: localhost:9092

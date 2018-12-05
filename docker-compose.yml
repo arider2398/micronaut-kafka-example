@@ -1,0 +1,45 @@
+version: "3"
+services:
+  zookeeper:
+    container_name: zookeeper
+    image: confluentinc/cp-zookeeper
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=2181
+    ports:
+      - 2181:2181
+    networks:
+      - kafka
+  kafka:
+    container_name: kafka
+    image: confluentinc/cp-kafka
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+    ports:
+      - 9092:9092
+    links:
+      - zookeeper
+    networks:
+      - kafka
+  consumer-sample:
+    container_name: consumer-sample
+    image: micronaut-kafka-example/consumer-sample:0.1
+    environment:
+      - 'KAFKA_BOOTSTRAP_SERVERS=//kafka:9092'
+    ports:
+      - 8086:8086
+    networks:
+      - kafka
+  producer-sample:
+    container_name: producer-sample
+    image: micronaut-kafka-example/producer-sample:0.1
+    environment:
+      - 'KAFKA_BOOTSTRAP_SERVERS=//kafka:9092'
+    ports:
+      - 8080:8080
+    networks:
+      - kafka
+
+networks:
+  kafka:
