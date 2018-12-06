@@ -9,6 +9,7 @@ services:
       - 2181:2181
     networks:
       - kafka
+
   kafka:
     container_name: kafka
     image: confluentinc/cp-kafka
@@ -22,15 +23,34 @@ services:
       - zookeeper
     networks:
       - kafka
+
+  db:
+    container_name: postgres-db
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: dbuser
+      POSTGRES_PASSWORD: theSecretPassword
+      POSTGRES_DB: micronaut
+    ports:
+      - 5432:5432
+    networks:
+      - kafka
+
   consumer-sample:
     container_name: consumer-sample
     image: micronaut-kafka-example/consumer-sample:0.1
     environment:
       - 'KAFKA_BOOTSTRAP_SERVERS=//kafka:9092'
+      - 'JDBC_USER=dbuser'
+      - 'JDBC_PASSWORD=theSecretPassword'
+      - 'JDBC_URL=jdbc:postgresql://postgres-db:5432/micronaut'
+      - 'JDBC_DRIVER=org.postgresql.Driver'
     ports:
       - 8086:8086
     networks:
       - kafka
+
   producer-sample:
     container_name: producer-sample
     image: micronaut-kafka-example/producer-sample:0.1
